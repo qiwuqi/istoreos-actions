@@ -16,8 +16,8 @@ sed -i 's/192.168.100.1/192.168.10.1/g' package/base-files/files/bin/config_gene
 # 修改主机名字
 sed -i 's/OpenWrt/iStoreOS/g' package/base-files/files/bin/config_generate
 
-# ttyd 自动登录
-sed -i "s?/bin/login?/usr/libexec/login.sh?g' package/feeds/packages/ttyd/files/ttyd.config
+# ttyd 自动登录（注释掉，避免出错）
+# sed -i "s?/bin/login?/usr/libexec/login.sh?g" package/feeds/packages/ttyd/files/ttyd.config
 
 # 添加自定义软件包
 echo '
@@ -26,7 +26,7 @@ CONFIG_PACKAGE_luci-app-adguardhome=y
 CONFIG_PACKAGE_luci-app-openclash=y
 ' >> .config
 
-# ========== 添加默认WiFi (完美配置) ==========
+# ========== 添加默认WiFi ==========
 mkdir -p files/etc/config
 cat > files/etc/config/wireless << 'EOF'
 config wifi-device 'radio0'
