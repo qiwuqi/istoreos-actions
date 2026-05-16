@@ -10,18 +10,43 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 
-# 修改openwrt登陆地址,把下面的 192.168.10.1 修改成你想要的就可以了
-#sed -i 's/192.168.100.1/192.168.10.1/g' package/base-files/files/bin/config_generate
+# 修改openwrt登陆地址
+sed -i 's/192.168.100.1/192.168.10.1/g' package/base-files/files/bin/config_generate
 
-# 修改主机名字，把 iStore OS 修改你喜欢的就行（不能纯数字或者使用中文）
-# sed -i 's/OpenWrt/iStore OS/g' package/base-files/files/bin/config_generate
+# 修改主机名字
+sed -i 's/OpenWrt/iStoreOS/g' package/base-files/files/bin/config_generate
 
 # ttyd 自动登录
-# sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${GITHUB_WORKSPACE}/openwrt/package/feeds/packages/ttyd/files/ttyd.config
+sed -i "s?/bin/login?/usr/libexec/login.sh?g' package/feeds/packages/ttyd/files/ttyd.config
 
 # 添加自定义软件包
-# echo '
-# CONFIG_PACKAGE_luci-app-mosdns=y
-# CONFIG_PACKAGE_luci-app-adguardhome=y
-# CONFIG_PACKAGE_luci-app-openclash=y
-# ' >> .config
+echo '
+CONFIG_PACKAGE_luci-app-mosdns=y
+CONFIG_PACKAGE_luci-app-adguardhome=y
+CONFIG_PACKAGE_luci-app-openclash=y
+' >> .config
+
+# ========== 添加默认WiFi (完美配置) ==========
+mkdir -p files/etc/config
+cat > files/etc/config/wireless << 'EOF'
+config wifi-device 'radio0'
+    option type 'mac80211'
+    option channel '6'
+    option band '2g'
+    option htmode 'HT20'
+    option disabled '0'
+    option country 'CN'
+
+config wifi-iface 'default_radio0'
+    option device 'radio0'
+    option network 'lan'
+    option mode 'ap'
+    option ssid 'iStoreOS-WiFi'
+    option encryption 'psk2+ccmp'
+    option key '12345678'
+EOF
+
+# 开机自动启用WiFi
+chmod +x files/etc/rc.local
+sed -i '/exit 0/d' files/etc/rc.local
+echo "wifi up" >> files/etc/rc.local
